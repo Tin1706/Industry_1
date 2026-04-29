@@ -1,0 +1,245 @@
+
+$(document).on('click', '.close', function () {
+  $('#registratiModal').modal('hide');
+  $('#loginModal').modal('hide');
+});
+
+$(document).on('click', '#registrati', function () {
+  $('#loginModal').modal('hide');
+  $('#registratiModal').modal('show');
+});
+
+$(document).on('click', '#accedi', function () {
+  $('#registratiModal').modal('hide');
+  $('#loginModal').modal('show');
+});
+
+function fnDownload(did) {
+  if (fn_isLogged(did) != true) {
+    $('#acc_email').attr("did", did);
+    $('#loginModal').modal('show');
+  } else {
+    window.open("/include/download.php?id=" + did, '_blank');
+  }
+}
+
+function fnDownloadS(did) {
+  if (fn_isLogged(did) != true) {
+    $('#acc_email').attr("did", did);
+    $('#loginModal').modal('show');
+  } else {
+    window.open("/include/download.php?id=" + did, '_blank');
+  }
+}
+
+function fn_viewVideo(did) {
+  if (fn_isLogged(did) != true) {
+    $('#acc_email').attr("did", did);
+    $('#loginModal').modal('show');
+  } else {
+    window.open("/assets/video/view_video.php?id=" + did, '_blank');
+  }
+};
+
+function fn_isLogged(did) {
+  var strReturn = "";
+  jQuery.ajax({
+    url: "/include/check.session.php",
+    data: "did=" + did,
+    type: 'POST',
+    success: function (html) {
+      strReturn = html;
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      strReturn = html;
+    },
+    async: false
+  });
+  return strReturn;
+}
+
+function fnLoginTarget(did, target) {
+  if (target === 'video') {
+    window.open("/assets/video/view_video.php?id=" + did, '_blank');
+    return;
+  }
+
+  var link = document.createElement("a");
+  link.setAttribute('download', did);
+  link.href = "include/download.php?id=" + did;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+/****************************************** */
+/** login accedi for view mp4 */
+/****************************************** */
+function login_accedi(did) {
+  var email = $('#acc_email').val();
+  var did = $('#acc_email').attr("did");
+  $.ajax({
+    url: "/include/login.accedi.php",
+    data: { email: email, did: did },
+    type: 'POST',
+    dataType: 'json',
+    success: function (data) {
+      document.getElementById("modal-header-alert").className = "success";
+      $('#loginModal').modal('hide');
+      fnLoginTarget(did, data.target);
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      document.getElementById("modal-header-alert").className = "error";
+      alertMsg.show('ERROR', xhr.responseText);
+    }
+  });
+}
+
+
+function login_accediScript(did) {
+  var email = $('#acc_email').val();
+  var did = $('#acc_email').attr("did");
+  $.ajax({
+    url: "/include/login.accedi.php",
+    data: { email: email, did: did },
+    type: 'POST',
+    dataType: 'json',
+    success: function (data) {
+      document.getElementById("modal-header-alert").className = "success";
+      $('#loginModal').modal('hide');
+      if (data.target === 'video') {
+        window.open("/assets/video/view_video.php?id=" + did, '_blank');
+        return;
+      }
+
+      var link = document.createElement("a");
+      link.setAttribute('open', did);
+      link.href = "../include/download.php?id=" + did;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      document.getElementById("modal-header-alert").className = "error";
+      alertMsg.show('ERROR', xhr.responseText);
+    }
+  });
+}
+
+
+var alertMsg = new function () {
+  this.show = function (title, msg, callback) {
+    $("#alertText").html(msg);
+    $("#alertTitle").text(title);
+    // Ensure the alert header has a default style if none is set
+    var header = document.getElementById('modal-header-alert');
+    if (header && !header.className) {
+      header.className = 'alert';
+    }
+    this.callback = callback;
+    $('#alertModal').modal('show');
+  }
+  this.continua = function () {
+    if (this.callback !== undefined && this.callback != '') { this.callback(); };
+    $('#alertModal').modal('hide');
+    // Clear header class to avoid leaking state across alerts
+    var header = document.getElementById('modal-header-alert');
+    if (header) {
+      header.className = '';
+    }
+  }
+}
+
+function login_add(from) {
+  var email = $('#reg_email').val();
+  var nome = $('#reg_nome').val();
+  var cognome = $('#reg_cognome').val();
+  var azienda = $('#reg_azienda').val();
+  var country = $('#reg_country').val();
+  if ($('#reg_marketing').is(":checked")) {
+    marketing = 1;
+  } else {
+    marketing = 0;
+  };
+  $.ajax({
+    url: "/include/login.add.php",
+    data: "email=" + email + "&nome=" + nome + "&cognome=" + cognome + "&azienda=" + azienda + "&country=" + country + "&marketing=" + marketing,
+    type: 'POST',
+    dataType: 'json',
+    processData: false,
+    success: function (data) {
+      document.getElementById("modal-header-alert").className = "success";
+      $('#registratiModal').modal('hide');
+      alertMsg.show(data.title, data.msg);
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      document.getElementById("modal-header-alert").className = "error";
+      alertMsg.show('ERRORE', xhr.responseText);
+    }
+  });
+}
+
+function chaange_lan(lang) {
+  $.ajax({
+    url: '/lang/lang.settings.php',
+    type: 'POST',
+    data: "lang=" + lang,
+    cache: false,
+    dataType: 'json',
+    processData: false,
+    success: function (data) {
+      window.location.reload(true);
+
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.responseText)
+    }
+  });
+}
+
+function allertDocS() {
+  alertMsg.show('ERROR', 'il documento richiesto non è stato trovato.');
+  alertMsg.continua = function () {
+    if (this.callback !== undefined && this.callback != '') { this.callback(); };
+    window.location = '/products-relay.php';
+    $('#alertModal').modal('hide');
+  }
+}
+
+function FAQ(id) {
+  var risposta = document.getElementById(id);
+  var piuId = "piu" + id;
+  if (risposta.style.display == "none") {
+    risposta.style.display = "";
+    document.getElementById(piuId).classList.remove("symbol-title");
+    document.getElementById(piuId).classList.add("symbol-title-inverted");
+  } else {
+    risposta.style.display = "none";
+    document.getElementById(piuId).classList.add("symbol-title");
+    document.getElementById(piuId).classList.remove("symbol-title-inverted");
+  };
+}
+
+function slugAnchor(slug) {
+  if (slug != '') {
+    var risSlug = "ris" + slug;
+    var rispost = document.getElementsByName(risSlug);
+    var id = rispost[0].getAttribute('id');
+    FAQ(id);
+    var target = $('#' + id + 'ANCHOR').offset().top - $('#topNavBarThytronic').height() - 5;
+    $('html, body').animate({
+      scrollTop: target
+    }, 300);
+  };
+}
+
+function fnVideo(id, youtubeId) {
+  var video = document.getElementById(id);
+  if (video.style.display === "none") {
+    video.style.display = "";
+  } else {
+    video.style.display = "none";
+  }
+}
+
+
+

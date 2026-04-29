@@ -1,0 +1,154 @@
+.custom-navbar-module--nav-container--3QHM7 {
+  background-color: #f6f3f3;
+}
+
+.custom-navbar-module--logo--1LlHU {
+  width: 180px!important;
+}
+
+.custom-navbar-module--active--2LwR7 {
+  color: #2b343d!important;
+  font-weight: 600;
+  position: relative;
+}
+
+.custom-navbar-module--active--2LwR7:hover {
+  color: #2b343d!important;
+}
+
+@media (min-width:768px) {
+  .custom-navbar-module--logo--1LlHU {
+    width: 220px!important;
+  }
+}
+
+@media (min-width:992px) {
+  .custom-navbar-module--logo--1LlHU {
+    margin: 1rem 0;
+  }
+}
+
+@media (min-width:992px) {
+  .custom-navbar-module--active--2LwR7 {
+    font-weight: 500;
+  }
+}
+
+@media (min-width:992px) {
+  .custom-navbar-module--active--2LwR7:after {
+    content: "";
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    width: 35%;
+    border: 2px solid #F3D148;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    animation-duration: .4s;
+    animation-name: custom-navbar-module--bounceIn--2NwOO;
+    animation-fill-mode: both;
+  }
+}
+
+@media (min-width:1200px) {
+  .custom-navbar-module--logo--1LlHU {
+    width: 250px!important;
+  }
+}
+
+@keyframes custom-navbar-module--bounceIn--2NwOO {
+  0% {
+    opacity: .2;
+    transform: scale(0) translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateX(-50%);
+  }
+}
+
+@media (min-width:1200px) {
+  .custom-navbar-module--logo {
+    width: 250px!important;
+  }
+}
+
+.custom-navbar-module--logo {
+  width: 180px!important;
+  overflow: hidden;
+}
+
+@media (min-width:768px) {
+  .custom-navbar-module--logo {
+    width: 180px!important;
+  }
+}
+
+@media (min-width:992px) {
+  .custom-navbar-module--logo {
+    width: 250px!important;
+  }
+}
+
+
+@media (min-width:992px) {
+  .custom-navbar-module--logo {
+    margin: 1rem 0;
+  }
+}
+
+@media (max-width:767px) {
+  .navfont {
+    font-size: 10px!important;
+  }
+}
+
+@media (max-width:1200px) {
+  .navfont {
+    font-size: 16px!important;
+  }
+}
+
+@media (max-width:767px) {
+  .navfontl {
+    font-size: 10px!important;
+  }
+}
+
+@media (max-width:1200px) {
+  .navfontl {
+    font-size: 18px!important;
+  }
+}
+
+@media (max-width:767px) {
+  .navRow {
+    height: 30px!important;
+    font-size: 10px!important;
+    padding-top: 0!important;
+    padding-bottom: 0!important;
+
+  }
+}
+
+@media (max-width:767px) {
+  .navlinkS {
+    height: 30px!important;
+    font-size: 8px!important;
+    padding: 0 0.2rem!important;
+  }
+}
+
+@media (min-width:768px) and (max-width:1200px) {
+  .navlinkS {
+    height: 30px!important;
+    font-size: 14px!important;
+    padding: 0 0.2rem!important;
+  }
+}
+
+@media (max-width:767px) {
+  .navUl {
+   margin-bottom: 0!important;
+   margin-left: 0!important;
+  }
+}
