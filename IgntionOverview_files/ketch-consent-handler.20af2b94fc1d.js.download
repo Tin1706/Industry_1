@@ -1,0 +1,80 @@
+/**
+ * Removes cookies by precise cookieName and adds special handling to
+ * wildcards in the cookieName (*) to support ketch export format for GA4 (e.g., '_ga_*')
+ */
+function removeCookie(cookieName) {
+    if (cookieName.indexOf('*') !== -1) { // handle wildcards
+        var prefix = cookieName.replace(/\*/g, '');
+        var allCookies = Cookies.get();
+        for (var actualName in allCookies) {
+            if (actualName.indexOf(prefix) === 0) {
+                removeCookie(actualName);
+            }
+        }
+        return;
+    }
+
+    // Root Domain
+    Cookies.remove(cookieName, { path: '/', domain: '.inductiveautomation.com' });
+
+    // Exact Hostname
+    Cookies.remove(cookieName, { path: '/', domain: window.location.hostname });
+
+    // Host-Only
+    Cookies.remove(cookieName, { path: '/' });
+}
+
+// These should match the "trackers" found and disclosed by Ketch
+var analytics_cookies_to_remove = [
+    '_dd_s', '__utmv', '_ga_*', '_gat_UA-*'
+];
+
+var marketing_cookies_to_remove = [
+    '_gcl_au', 'test_cookie', '_zitok'
+];
+
+if (window.ketch && typeof window.ketch === 'function') {
+    // Fires on page load and when user changes consent status
+    window.ketch('on', 'consent', function(consent) {
+        if (consent && consent.purposes) {
+
+            // --- START ADVANCED CONSENT MODE UPDATE ---
+            gtag('consent', 'update', {
+                'ad_storage': consent.purposes.targeted_advertising === true ? 'granted' : 'denied',
+                'ad_user_data': consent.purposes.targeted_advertising === true ? 'granted' : 'denied',
+                'ad_personalization': consent.purposes.targeted_advertising === true ? 'granted' : 'denied',
+                'analytics_storage': consent.purposes.analytics === true ? 'granted' : 'denied'
+            });
+            // --- END ADVANCED CONSENT MODE UPDATE ---
+
+            window.dataLayer.push({ 'event': 'ketch_status_resolved' });
+
+            if (consent.purposes.targeted_advertising === true) {
+                window.dataLayer.push({ 'event': 'LoadMarketingScripts', 'ketch_marketing_consent': true });
+            }
+
+            if (consent.purposes.analytics === true) {
+                window.dataLayer.push({ 'event': 'LoadAnalyticsScripts', 'ketch_analytics_consent': true });
+            }
+        }
+    });
+
+    // Fires after user changes consent status
+    window.ketch('on', 'userConsentUpdated', function(consent) {
+        if (consent && consent.purposes) {
+
+            if (consent.purposes.targeted_advertising !== true) {
+                marketing_cookies_to_remove.forEach(removeCookie);
+                window.dataLayer.push({ 'ketch_marketing_consent': false });
+            }
+
+            if (consent.purposes.analytics !== true) {
+                analytics_cookies_to_remove.forEach(removeCookie);
+                window.dataLayer.push({ 'ketch_analytics_consent': false });
+            }
+        }
+    });
+
+} else {
+    console.warn('Ketch API not loaded. Consent listener not attached.');
+}

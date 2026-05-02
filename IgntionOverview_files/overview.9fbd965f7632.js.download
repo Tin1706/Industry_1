@@ -1,0 +1,311 @@
+const STATIC_URL = window.STATIC_URL || '/static/'
+var overviewPage = {
+    settings: {
+        backstretch: [
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_1_sm.jpg",
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_2_sm.jpg",
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_3_sm.jpg",
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_4_sm.jpg",
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_5_sm.jpg",
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_6_sm.jpg",
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_7_sm.jpg",
+            STATIC_URL + "images/overview/tabletMobileStillSwaps_8_sm.jpg"
+        ],
+        cachedWidth: $(window).width(),
+        window: $(window),
+        slideShow: $('.slideshow'),
+        slideShow2: $('.slideshow2'),
+        slideShow3: $('.slideshow3'),
+        solutionList: $('#solution-list'),
+        backgroundVideo: $('#bgvid'),
+        heroBackground: $('.products_headerbg'),
+        platformButton: $('#platformBtn'),
+        leftSolutionButton: $('#left-solution-button'),
+        rightSolutionButton: $('#right-solution-button'),
+        companyBarLeftButton: $('#companybar a.left-btn.button'),
+        companyBarRightButton: $('#companybar a.right-btn.button'),
+        floatingNav: $('div.overview-wrapper .floating-nav'),
+        navConnect: $('#f-nav-connect'),
+        navDesign: $('#f-nav-design'),
+        navDeploy: $('#f-nav-deploy'),
+        navIgnition: $('#f-nav-ignition'),
+        allFloatNavLinks: $('div.floating-nav .floating-list a'),
+        adaFocus: $('[data-ada-focus]'),
+        wistiaVideoLink: $('.play-wistia-video'),
+    },
+
+    init: function(){
+        var s = this.settings;
+        this.heightinator();
+        this.startSlick(s);
+        this.resizeHeroContent(s);
+        this.bindUIActions(s);
+    },
+
+    removeWistiaIndex: function(s){
+        var wistiaEl = s.wistiaVideoLink;
+
+        wistiaEl.each(function() {
+            $(this).attr("tabindex", "-1");
+        })
+    },
+
+    bindUIActions: function(s){
+        var self = this;
+
+        // Send keyboard event to wistia video player on focus of another element
+        s.adaFocus.on("focus", function() {
+            var $this = $(this);
+            var adaFocus = $this.data("ada-focus");
+            var element;
+
+            if(["wistia-video"].indexOf(adaFocus) > -1) {
+                element = $this.children().first();
+                $this.on("keydown.playVideo", function (e) {
+                    if(e.which === 13) {
+                        element.children().first().trigger('click');
+                        self.removeWistiaIndex(s);
+                    }
+                })
+            }
+        });
+
+        // Remove wistia keyboard event on focus off of the other element
+        s.adaFocus.on("focusout", function() {
+            $(this).off("keydown.playVideo");
+        });
+
+        this.removeWistiaIndex(s);
+
+        s.window.on('resize load', function (e) {
+            var newWidth = s.window.width();
+            if(e.type === 'resize'){
+                if(newWidth !== s.cachedWidth){
+                    self.heightinator(s);
+                    self.resizeHeroContent(s);
+                    s.cachedWidth = newWidth;
+                }
+            } else {
+                self.heightinator(s);
+                self.resizeHeroContent(s);
+            }
+        });
+
+        s.solutionList.on('scroll', function(){
+            if(s.solutionList.scrollLeft() > 20){
+                s.leftSolutionButton.show("slide", {direction: "left"}, 1000);
+            }else{
+                s.leftSolutionButton.hide("slide", {direction: "left"}, 1000);
+            }
+        });
+
+        s.backgroundVideo.on('ended', this.restartVideo);
+
+        s.heroBackground.backstretch(s.backstretch, {duration: 4000, fade: 500});
+
+        s.platformButton.click(function(){
+            var platformInfo = $('#platformReqs');
+            var platformImage = $('#platformBtn img');
+
+            if(platformInfo.css('display') === 'none'){
+                platformImage.removeClass('moreArrowDown');
+                platformImage.addClass('moreArrowUp');
+                platformInfo.slideDown('slow');
+                $('html, body').animate({
+                    scrollTop: platformInfo.offset().top
+                }, 1000);
+            }else{
+                platformImage.addClass('moreArrowDown');
+                platformImage.removeClass('moreArrowUp');
+                platformInfo.slideUp('slow');
+            }
+        });
+
+        s.leftSolutionButton.click(function() {
+            s.solutionList.animate({scrollLeft: "-=200px"}, "slow");
+        });
+
+        s.rightSolutionButton.click(function() {
+            s.solutionList.animate({scrollLeft: "+=200px"}, "slow");
+        });
+
+        s.companyBarLeftButton.hover(function() {
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_leftArrow_hover@2x.png');
+            }, function(){
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_leftArrow@2x.png');
+        });
+
+        s.companyBarRightButton.hover(function() {
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_rightArrow_hover@2x.png');
+            }, function(){
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_rightArrow@2x.png');
+        });
+
+        s.slideShow.on('init setPosition', function () {
+            var currentImage = $('.slideshow .slick-active img').attr('class');
+            var slideInfo;
+            switch(currentImage){
+                case "imageOne":
+                   slideInfo = "See and manage your entire system from one place";
+                   break;
+                case "imageThree":
+                   slideInfo = "Connect to plant-floor and field devices";
+                   break;
+                case "imageFour":
+                   slideInfo = "Read and write data from any PLC and SQL database";
+                   break;
+            }
+             $('.laptop p.slide-info').text(slideInfo);
+        });
+
+        s.slideShow2.on('init setPosition', function () {
+            var currentImage = $('.slideshow2 .slick-active img').attr('class');
+            var slideInfo;
+            switch(currentImage){
+                case "imageOne":
+                   slideInfo = "Sierra Nevada Brewing Co. connects their entire facility with Ignition";
+                   break;
+                case "imageTwo":
+                   slideInfo = "Chobani uses Ignition to integrate their enterprise and industrial systems together";
+                   break;
+                case "imageThree":
+                   slideInfo = "Water district uses Ignition to create a worry-free SCADA system";
+                   break;
+                case "imageFour":
+                   slideInfo = "Jail enhances security with powerful and secure Ignition HMI";
+                   break;
+            }
+             $('.console p.slide-info').html(slideInfo);
+        });
+
+        s.slideShow3.on('init setPosition', function () {
+            var currentImage = $('.slideshow3 .slick-active img').attr('class');
+            var slideInfo;
+            switch(currentImage){
+                case "imageOne":
+                   slideInfo = "View and control your SCADA system <br class='show-for-565'/> right from the app on your phone";
+                   break;
+                case "imageTwo":
+                   slideInfo = "Monitor the performance of your entire system through the web";
+                   break;
+                case "imageThree":
+                   slideInfo = "Create robust HMIs for industrial displays";
+                   break;
+            }
+             $('.tablet p.slide-info').html(slideInfo);
+        });
+    },
+
+    resizeHeroContent: function(s){
+        var width = s.window.width();
+        var video = s.backgroundVideo;
+        var leftButton = $('.overview-wrapper span.slick-arrow.left-button');
+        var rightButton = $('.overview-wrapper span.slick-arrow.right-button');
+
+        if(width > 1024){
+            video.html('<source src="/static/video/8-page-product-video-2.mp4" type="video/mp4">');
+        }
+
+        if(width < 1442){
+            s.solutionList.width(width - 60);
+            s.solutionList.css({left: 30, right: 30});
+        }else{
+            s.solutionList.width('inherit');
+            s.solutionList.css({left: 0, right: 0});
+        }
+
+        if(width < 642) {
+           rightButton.children('img').attr("src", STATIC_URL + 'images/icons/majorFeatureNavArrow_right_mobile@2x.png');
+           leftButton.children('img').attr("src", STATIC_URL + 'images/icons/majorFeatureNavArrow_left_mobile@2x.png');
+        } else {
+            rightButton.children('img').attr("src", STATIC_URL + 'images/icons/majorFeatureNavArrow_right@2x.png');
+            leftButton.children('img').attr("src", STATIC_URL + 'images/icons/majorFeatureNavArrow_left@2x.png');
+        }
+
+        if(width < 330 || width < 737 && s.window.height() < s.window.width()){
+            $('div.downer').height('50');
+            $('.downer-text').text('');
+        }else{
+            $('div.downer').height('85');
+            $('.downer-text').html("Scroll to learn more <br>");
+        }
+    },
+
+    restartVideo: function(s){
+        s.backgroundVideo.play();
+    },
+
+    heightinator: function() {
+        var windowWidth = $(window).width();
+        var headerHeight;
+
+        if(windowWidth < 768){
+            headerHeight = $('nav.tab-bar.custom-medium-breakpoint').outerHeight();
+        }else{
+            headerHeight = $('.headerbg').outerHeight();
+        }
+
+        var theHeight = $(window).height() - headerHeight + 75;
+
+        var minPossibleHeight = 600;
+        if(windowWidth > 768 && theHeight < minPossibleHeight) {
+            theHeight = minPossibleHeight;
+        }
+
+        // Check if site-banner exists
+        if($('.headerbg').offset().top > 0) {
+            $('.products_headerbg').css({
+                "min-height": theHeight - $('.site-banner').height()
+            });
+        } else {
+            $('.products_headerbg').css({
+                "min-height": theHeight
+            });
+        }
+    },
+
+    startSlick: function(s){
+        s.slideShow.slick({
+            dots: true,
+            appendDots: $('.gimme-dots'),
+            infinite: true,
+            speed: 0,
+            fade: true,
+            cssEase: 'linear',
+            rtl: true,
+            arrows: true,
+            'prevArrow': '<button class="left-button design-navigation-button" aria-label="previous"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_left@2x.png" alt="" /></button>',
+            'nextArrow': '<button class="right-button design-navigation-button" aria-label="next"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_right@2x.png" alt="" /></button>',
+            zIndex: 10
+        });
+
+
+        s.slideShow2.slick({
+            dots: true,
+            appendDots: $('.gimme-dots-too'),
+            infinite: true,
+            speed: 0,
+            fade: true,
+            cssEase: 'linear',
+            rtl: true,
+            arrows: true,
+            'prevArrow': '<button class="left-button design-navigation-button" aria-label="previous"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_left@2x.png" alt="" /></button>',
+            'nextArrow': '<button class="right-button design-navigation-button" aria-label="next"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_right@2x.png" alt="" /></button>',
+            zIndex: 10
+        });
+
+        s.slideShow3.slick({
+            dots: true,
+            appendDots: $('.gimme-dots-too-also'),
+            infinite: true,
+            speed: 0,
+            fade: true,
+            cssEase: 'linear',
+            rtl: true,
+            arrows: true,
+            'prevArrow': '<button class="left-button design-navigation-button" aria-label="previous"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_left@2x.png" alt="" /></button>',
+            'nextArrow': '<button class="right-button design-navigation-button" aria-label="next"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_right@2x.png" alt="" /></button>',
+            zIndex: 10
+        });
+    }
+};

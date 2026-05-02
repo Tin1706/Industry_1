@@ -1,0 +1,461 @@
+var productPages = {
+    settings: {
+        platformSpecs: $('a.platformBtn'),
+        accordions: $('div.main-content-wrapper .alarming-faq p.alarming-accordion'),
+        faqButton: $('div.faq a.faq-button'),
+        openDemoFormButton: $('.open-demo-form'),
+        window: $(window),
+        readMore: $('span.read-more'),
+        slideShowDT: $('.dt-slideshow'),
+        // typewriter animation selectors
+        typewriterAnimation: $('.typewriter-animation'),
+        typewriterWords: ['Collect All Your Data', 'Connect All Your Devices', 'Integrate All Your Systems',
+                'Visualize All Your Operations', 'Deploy All Your Solutions'],
+        typewriterSpeed: 80,
+        typewriterDelay: 20,
+        // prefooter selectors
+        talkToExpertButton: $('#talk-to-expert-btn'),
+        dropDownForm: $('.talk-to-expert'),
+        contactFormSubmitBtn: $('#contact-submit'),
+        talkToExpertForm: $('form.talk-to-expert-form'),
+        countrySelect: $('#id_country'),
+        industrySelect: $('#industry-select'),
+        isIntegratorSelect: $('#id_is_integrator'),
+        roleSelect: $('#id_role'),
+        allSelects: $('select'),
+        extendOpsWrapper: $('#extendOpsWrapper'),
+        extendOpsSvg: $('#extendOpsSvg'),
+        isExtendOpsEnter: false,
+        isExtendOpsExit: true,
+        gainElasticWrapper: $('#gainElasticWrapper'),
+        gainElasticSvg: $('#gainElasticSvg'),
+        isGainElasticEnter: false,
+        isGainElasticExit: true,
+        scaleStorageWrapper: $('#scaleStorageWrapper'),
+        scaleStorageSvg: $('#scaleStorageSvg'),
+        isScaleStorageEnter: false,
+        isScaleStorageExit: true
+    },
+
+    init: function () {
+        var s = this.settings;
+        get_country_list('id_country', true);
+        this.initializeSelect(s);
+        this.bindUIActions(s);
+        this.startSlick(s);
+        this.typewriterAnimate(s);
+
+        var hash = location.hash;
+
+        if(hash && hash === '#anchor-talk-to-expert') {
+            s.talkToExpertButton.trigger('click')
+        }
+    },
+
+    bindUIActions: function (s) {
+        s.extendOpsWrapper.on('mouseenter', function() {
+            if (s.isExtendOpsExit && !s.isExtendOpsEnter) {
+                s.isExtendOpsEnter = s.isExtendOpsExit;
+                s.isExtendOpsExit = !s.isExtendOpsEnter;
+                s.extendOpsSvg[0].dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
+            }
+        });
+        s.extendOpsWrapper.on('mouseleave', function() {
+            if (s.isExtendOpsEnter && !s.isExtendOpsExit) {
+                s.isExtendOpsExit = s.isExtendOpsEnter;
+                s.isExtendOpsEnter = !s.isExtendOpsExit;
+                s.extendOpsSvg[0].dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+            }
+        });
+
+        s.gainElasticWrapper.on('mouseenter', function() {
+            if (s.isGainElasticExit && !s.isGainElasticEnter) {
+                s.isGainElasticEnter = s.isGainElasticExit;
+                s.isGainElasticExit = !s.isGainElasticEnter;
+                s.gainElasticSvg[0].dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
+            }
+        });
+        s.gainElasticWrapper.on('mouseleave', function() {
+            if (s.isGainElasticEnter && !s.isGainElasticExit) {
+                s.isGainElasticExit = s.isGainElasticEnter;
+                s.isGainElasticEnter = !s.isGainElasticExit;
+                s.gainElasticSvg[0].dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+            }
+        });
+
+        s.scaleStorageWrapper.on('mouseenter', function() {
+            if (s.isScaleStorageExit && !s.isScaleStorageEnter) {
+                s.isScaleStorageEnter = s.isScaleStorageExit;
+                s.isScaleStorageExit = !s.isScaleStorageEnter;
+                s.scaleStorageSvg[0].dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
+            }
+        });
+        s.scaleStorageWrapper.on('mouseleave', function() {
+            if (s.isScaleStorageEnter && !s.isScaleStorageExit) {
+                s.isScaleStorageExit = s.isScaleStorageEnter;
+                s.isScaleStorageEnter = !s.isScaleStorageExit;
+                s.scaleStorageSvg[0].dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+            }
+        });
+
+        s.allSelects.on('change', function(){
+            var ele = $(this);
+            var currentVal = ele.val();
+
+            if (currentVal === '') {
+                ele.css('color', '#9b9b9b');
+            } else {
+                ele.css('color', '#FFFFFF');
+            }
+        });
+
+        s.platformSpecs.click(function () {
+            var platformInfo = $('div.solutions-platformReqs');
+            var platformImage = $('a.platformBtn img');
+            if (platformInfo.css('display') === 'none') {
+                platformImage.removeClass('moreArrowDown');
+                platformImage.addClass('moreArrowUp');
+                platformInfo.slideDown('slow');
+                $('html, body').animate({
+                    scrollTop: $("div.solutions-platformReqs").offset().top
+                }, 1000);
+            } else {
+                platformImage.addClass('moreArrowDown');
+                platformImage.removeClass('moreArrowUp');
+                platformInfo.slideUp('slow');
+            }
+        });
+
+        s.accordions.click(function () {
+            var panel = $(this).next();
+            if (panel.css("display") === 'none') {
+                $(this).children('img').addClass('faq-arrow-down');
+                panel.slideDown(100);
+            } else {
+                $(this).children('img').removeClass('faq-arrow-down');
+                panel.slideUp(100);
+            }
+        });
+
+        s.accordions.keypress(function () {
+            var panel = $(this).next();
+            if (panel.css("display") === 'none') {
+                $(this).children('img').addClass('faq-arrow-down');
+                panel.slideDown(100);
+            } else {
+                $(this).children('img').removeClass('faq-arrow-down');
+                panel.slideUp(100);
+            }
+        });
+
+        s.faqButton.click(function () {
+            var alarmingFaq = $('#alarming-faq');
+            var alarmingImg = $('div.faq a.faq-button img');
+            if (alarmingFaq.css('display') === 'none') {
+                alarmingImg.addClass('faq-image-up');
+                alarmingFaq.slideDown('slow');
+                $('html, body').animate({
+                    scrollTop: $("div.row.faq").offset().top - 100
+                }, 1000);
+            } else {
+                alarmingImg.removeClass('faq-image-up');
+                alarmingFaq.slideUp('slow');
+            }
+        });
+
+        s.faqButton.keypress(function () {
+            var alarmingFaq = $('#alarming-faq');
+            var alarmingImg = $('div.faq a.faq-button img');
+            if (alarmingFaq.css('display') === 'none') {
+                alarmingImg.addClass('faq-image-up');
+                alarmingFaq.slideDown('slow');
+                $('html, body').animate({
+                    scrollTop: $("div.row.faq").offset().top - 100
+                }, 1000);
+            } else {
+                alarmingImg.removeClass('faq-image-up');
+                alarmingFaq.slideUp('slow');
+            }
+        });
+
+        s.readMore.on('click', function () {
+            var dropDownKey = $(this).data('read');
+            var dropDown = $('#drop-down-' + dropDownKey);
+            if (dropDown.css('display') === 'none') {
+                dropDown.slideDown('500');
+                $(this).text('READ LESS')
+            } else {
+                dropDown.slideUp('500');
+                $(this).text('READ MORE')
+            }
+        });
+
+        s.readMore.on('keypress', function () {
+            var dropDownKey = $(this).data('read');
+            var dropDown = $('#drop-down-' + dropDownKey);
+            if (dropDown.css('display') === 'none') {
+                dropDown.slideDown('500');
+                $(this).text('READ LESS')
+            } else {
+                dropDown.slideUp('500');
+                $(this).text('READ MORE')
+            }
+        });
+
+        s.openDemoFormButton.on('click', function () {
+            var dropDown = s.dropDownForm;
+            if (dropDown.css('display') === 'none') {
+                setTimeout(function () {
+                    dropDown.slideDown('1000');
+                }, 500);
+            } else {
+                dropDown.slideUp('500');
+            }
+        })
+
+        s.talkToExpertButton.on('click', function () {
+            var dropDown = s.dropDownForm;
+            if (dropDown.css('display') === 'none') {
+                $(this).fadeOut('1000');
+                setTimeout(function () {
+                    dropDown.slideDown('1000');
+                }, 500);
+            } else {
+                dropDown.slideUp('500');
+            }
+        });
+
+        s.dropDownForm.on('click', 'span.cancel-button, span.close-x', function () {
+            var content = s.dropDownForm;
+            content.slideUp('1000');
+            s.talkToExpertButton.fadeIn('1000');
+        });
+
+        s.countrySelect.on('change', function() {
+            var distributors = DISTRIBUTOR_COUNTRIES;
+            var countryVal = s.countrySelect.val();
+
+            if($.inArray(countryVal.toUpperCase(), distributors) > -1){
+                $('.form-privacy-statement span.hide-message').addClass('show-message');
+            }else {
+                $('.form-privacy-statement span.hide-message').removeClass('show-message');
+            }
+        });
+
+
+        s.isIntegratorSelect.on('change', function () {
+            var conditional = $('.industry-conditional');
+            if ($(this).val() === 'no') {
+                conditional.find('select').addClass('required');
+                conditional.slideDown('1000');
+            } else {
+                conditional.find('select').removeClass('required');
+                conditional.slideUp('1000');
+            }
+        });
+
+        s.roleSelect.on('change', function(){
+            var otherRole = $('.other-input');
+            if ($(this).val() === 'Other - Write In') {
+                otherRole.find('input').addClass('required');
+                otherRole.slideDown('1000');
+            } else {
+                otherRole.find('input').removeClass('required');
+                otherRole.slideUp('1000');
+            }
+        });
+
+        s.contactFormSubmitBtn.on('click', function (e) {
+            e.preventDefault();
+            var needValidationMessage = {};
+
+            function removeErrors(){
+                $('[data-error]').hide();
+                $('input, select').removeClass('error');
+            }
+
+            s.talkToExpertForm.find(".required").each(function () {
+                var fieldName = $(this).attr('name');
+                var value = $(this).val();
+                if(value === ''){
+                    needValidationMessage[fieldName] = value;
+                }else if(fieldName === 'email'){
+                    var re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                    var is_email=re.test(value);
+                    if(!is_email){
+                        needValidationMessage[fieldName] = value;
+                    }
+                }
+            });
+
+            removeErrors();
+
+            if (!$.isEmptyObject(needValidationMessage)) {
+                for (var validate in needValidationMessage) {
+                    var ele = $('[data-error=' + validate + ']');
+                    ele.show();
+                    ele.next('input, select').addClass('error');
+                }
+
+                $('html, body').animate({scrollTop: $("form.talk-to-expert-form").offset().top-50}, 500);
+                return false;
+            } else {
+                $(this).html('<span>Sending <i class="fa fa-spinner fa-spin fa-lg fa-fw"></i></span>');
+                var data = s.talkToExpertForm.serialize();
+                //console.log('posting to talk-to-expert');
+                $.post('/ignition/talk-to-expert', data, function (res) {
+                    // console.log(res);
+                    if (res.status == 'success') {
+                        // make variables available for new GTM integration
+                        GTMEnhancedConversions(res.firstname, res.lastname, res.phone, res.email);
+
+                        var pathname = window.location.pathname;
+                        if (typeof pathname === 'undefined' || pathname === null) {
+                            pathname = 'solutions';
+                        }
+                        GTMTrackEvent('trackContactUs');
+                        $('html, body').animate({scrollTop: $("form.talk-to-expert-form").offset().top-100}, 500);
+                        // $('.talk-to-expert-form div.form-contents').fadeOut('slow', function () {
+                        $('form.talk-to-expert-form').fadeOut('slow', function () {
+                            $(this).html("" +
+                                "<div class='row form-thank-you'>" +
+                                    "<div class='small-12 medium-10 medium-offset-1'>" +
+                                        "<p>Thanks " + res.firstname + "!</p>" +
+                                        "<p>" +
+                                            "Your request was sent successfully. We will be in contact soon to schedule your online Ignition demo." +
+                                        "</p>" +
+                                        "<span class='show-for-small-down small-12 columms close-x'>Close &#10005;</span>" +
+                                    "</div>" +
+                                "</div>"
+                            );
+                            $('.talk-to-expert h6.text-center').fadeTo('slow', 0, function () {
+                                $(this).css('visibility', 'hidden');
+                            });
+                            $(this).fadeIn('slow');
+                        });
+                    }else if(res.status == 'error') {
+                        // remove spinner from the button
+                        s.contactFormSubmitBtn.html('<span>Please contact me</span>');
+
+                        // increment failure attempts
+                        var attempts = res['failureCount'];
+                        $('#id_failure_count').val(attempts);
+
+                        // hide all errors
+                        removeErrors();
+
+                        // display backend errors
+                        for (var form_error in res.errors) {
+                            var errorInput = $('[data-error='+ form_error +']');
+                            var error_message = res.errors[form_error][0]['message'];
+                            var errorInputBoxId = errorInput.parent().find('label').prop('for');
+
+                            errorInput.find('li').text(error_message);
+                            errorInput.show().css("display", "inline-block");
+                            $('#'+ errorInputBoxId).addClass('inputError');
+                        }
+                    }else {
+                        s.contactFormSubmitBtn.fadeTo('slow', 0, function () {
+                            s.contactFormSubmitBtn.css('visibility', 'hidden');
+                            s.contactFormSubmitBtn.after('<p style="float: right; font-size: 16px; color: red; font-weight: bold; letter-spacing: 0;">An error has occured</p>');
+                        })
+                    }
+                });
+            }
+        });
+    },
+
+    startSlick: function(s) {
+        s.slideShowDT.slick({
+            dots: true,
+            appendDots: $('.gimme-dots'),
+            ltr: true,
+            arrows: false,
+            zIndex: 10
+        });
+    },
+
+    typewriterAnimate: function (s) {
+        var words = s.typewriterWords,
+            part,
+            i = 0,
+            offset = 0,
+            forwards = true,
+            skip_count = 0,
+            skip_delay = s.typewriterDelay,
+            len = s.typewriterWords.length,
+            speed = s.typewriterSpeed;
+
+        setInterval(function () {
+            if (forwards) {
+                if (offset >= words[i].length) {
+                    ++skip_count;
+                    if (skip_count === skip_delay) {
+                        forwards = false;
+                        skip_count = 0;
+                    }
+                }
+            }
+            else {
+                if (offset === 0) {
+                    forwards = true;
+                    i++;
+                    offset = 0;
+                    if (i >= len) {
+                        i = 0;
+                    }
+                }
+            }
+            part = words[i].substr(0, offset);
+            if (skip_count === 0) {
+                if (forwards) {
+                    offset++;
+                }
+                else {
+                    offset--;
+                }
+            }
+            s.typewriterAnimation.text(part);
+        }, speed);
+    },
+
+    initializeSelect: function(s){
+        s.industrySelect.selectize({
+            placeholder: 'Start typing to select an industry',
+            valueField: 'value',
+            labelField: 'name',
+            searchField: 'name',
+            lockOptgroupOrder: true,
+            options: [],
+            optgroups: [],
+            optgroupField: 'id',
+            preload: true,
+            load: function(query, callback){
+                $.get('/get-industry-drop-down-list', function(data){
+                    var selectize = s.industrySelect[0].selectize;
+                    var items = [];
+
+                    $.each(data, function (i, group) {
+                        var optGroup = {
+                            'value': group.industry_title,
+                            'label': group.industry_title
+                        };
+
+                        selectize.addOptionGroup(optGroup['value'], optGroup);
+
+                        $.each(group.industry_list, function(i, industry){
+                            var item = {
+                                'id': group.industry_title,
+                                'value': industry,
+                                'name': industry
+                            };
+                            items.push(item);
+                        });
+                    });
+
+                    callback(items);
+                });
+            }
+        });
+    }
+};

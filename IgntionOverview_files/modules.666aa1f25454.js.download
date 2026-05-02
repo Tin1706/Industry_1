@@ -1,0 +1,86 @@
+var modulesPages = {
+     settings: {
+         slideShow: $('div.modules-carousel'),
+         faqDropDown: $('h4.faq-drop-down'),
+         window: $(window)
+    },
+
+    init: function () {
+        var s = this.settings;
+        this.initSlick(s);
+        this.bindUIActions(s);
+    },
+
+    bindUIActions: function (s) {
+         s.faqDropDown.click(function(){
+            var content = $('.requirements-content');
+            var contentImage = $('h4.faq-drop-down img');
+
+            if(content.css('display') === 'none'){
+                contentImage.addClass('rotate-arrow');
+                content.slideDown('1000');
+            }else{
+                contentImage.removeClass('rotate-arrow');
+                content.slideUp('1000');
+            }
+         });
+
+         s.faqDropDown.keypress(function(){
+            var content = $('.requirements-content');
+            var contentImage = $('h4.faq-drop-down img');
+
+            if(content.css('display') === 'none'){
+                contentImage.addClass('rotate-arrow');
+                content.slideDown('1000');
+            }else{
+                contentImage.removeClass('rotate-arrow');
+                content.slideUp('1000');
+            }
+         });
+
+         s.slideShow.on('afterChange', function(event, slick, currentSlide, nextSlide){
+             if(s.window.width() <= 641){
+                 var height = $(".slick-current").height();
+                 $(this).css({height: height});
+             } else {
+                 $(this).css({height: "auto"})
+             }
+         });
+
+         s.window.on('resize load', function(){
+             var leftButton = $('.main-content-wrapper.modules-page span.slick-arrow.left-button');
+             var rightButton = $('.main-content-wrapper.modules-page span.slick-arrow.right-button');
+
+             var width = s.window.width();
+             if(width < 642) {
+                rightButton.children('img').attr("src", STATIC_URL + 'images/icons/majorFeatureNavArrow_right_mobile@2x.png');
+                leftButton.children('img').attr("src", STATIC_URL + 'images/icons/majorFeatureNavArrow_left_mobile@2x.png');
+             } else {
+                rightButton.children('img').attr("src", STATIC_URL + 'images/icons/NavArrow-Right@2x.png');
+                leftButton.children('img').attr("src", STATIC_URL + 'images/icons/NavArrow-Left@2x.png');
+             }
+
+             if(width <= 641){
+                 var height = $(".slick-current").height();
+                 s.slideShow.css({height: height});
+             }else {
+                 s.slideShow.css({height: "auto"});
+             }
+         });
+     },
+
+    initSlick: function (s) {
+        s.slideShow.slick({
+            dots: true,
+            appendDots: $('.image-dots'),
+            infinite: true,
+            speed: 0,
+            fade: true,
+            cssEase: 'linear',
+            arrows: true,
+            'prevArrow': '<button class="left-button design-navigation-button"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_left@2x.png"/></button>',
+            'nextArrow': '<button class="right-button design-navigation-button"><img src="' + STATIC_URL + 'images/icons/majorFeatureNavArrow_right@2x.png"/></button>',
+            zIndex: 10
+        })
+    }
+};

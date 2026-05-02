@@ -1,0 +1,55 @@
+(function() {
+    function FocusTagger() {
+        /* Adds event listeners to the body, tracking the last kind of input used.
+        /* When a target receives focus, it is given a data attribute (data-focus-type),
+        /* which can be leveraged for special styling or functionality. The possible values
+        /* for this datatype are: "key", "mouse", and "touch".
+        /*
+        /* An example of a CSS selector that makes use of this is: [data-focus-type="key"]:focus
+         */
+        this.t = document.body;
+        this._focusMethod = this._lastFocusMethod = false;
+        this._attr = "data-focus-type";
+
+        this._bindEvents  = function () {
+            this._onKeyDown = this._onKeyDown.bind(this);
+            this._onMouseDown = this._onMouseDown.bind(this);
+            this._onTouchStart = this._onTouchStart.bind(this);
+            this._onFocus = this._onFocus.bind(this);
+            this._onBlur = this._onBlur.bind(this);
+
+            if (this.t.addEventListener) {
+                this.t.addEventListener("keydown", this._onKeyDown, {passive: true, capture: true});
+                this.t.addEventListener("mousedown", this._onMouseDown, {passive: true, capture: true});
+                this.t.addEventListener("touchstart", this._onTouchStart, {passive: true, capture: true});
+                this.t.addEventListener("focus", this._onFocus, {passive: true, capture: true});
+                this.t.addEventListener("blur", this._onBlur, {passive: true, capture: true});
+            }
+        }
+
+        this._onKeyDown = function () {
+            this._focusMethod = "key";
+        }
+
+        this._onMouseDown = function () {
+            this._focusMethod = "mouse";
+        }
+
+        this._onTouchStart = function () {
+            this._focusMethod = "touch";
+        }
+
+        this._onFocus = function (e) {
+            e.target.setAttribute(this._attr, this._focusMethod);
+            this._focusMethod = false;
+        }
+
+        this._onBlur = function (e) {
+            e.target.removeAttribute(this._attr);
+        }
+
+        this._bindEvents();
+    }
+
+    new FocusTagger();
+}())

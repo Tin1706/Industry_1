@@ -1,0 +1,373 @@
+var desktopNav = $('#js-main-ia-nav');
+
+/**
+ * Hide all megamenus and strip all a.firstlevel links of their hover class
+ */
+$('.close-mm a').on('click',function (e) {
+    e.preventDefault();
+    closeMenu();
+});
+
+function add_right_submenu() {
+    // add a 'right-submenu' to the off-canvas mobile menu lists
+    $('ul.off-canvas-list').children("li.has-submenu").each(function () {
+        $(this).children("ul").hide();
+    });
+    $('ul.off-canvas-list').children("li.has-submenu").on('click', function () {
+        $(this).children('ul').slideToggle(150);
+        $(this).toggleClass('expanded');
+    });
+    $('ul.submenu-list').find('a').on('click', function (e) {
+        e.stopPropagation();
+    });
+}
+
+function isTouchDevice() {
+    return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
+}
+
+function initMenu() {
+    var login = getUrlParameter('login');
+    if (typeof login !== "undefined" && login) {
+        $('#nav-trial-link').hide();
+    }
+    $(".search_txtbox").attr("placeholder", "Search");
+
+    desktopNav.find('.search-icon').on('click keypress', function () {
+        var parent = $(this).closest('.search');
+
+        if (!parent.hasClass('expanded')) {
+            parent.addClass('expanded');
+            parent.find('.open-search').html('Cancel');
+            parent.find('input').focus();
+        } else {
+            parent.submit();
+        }
+    });
+
+    desktopNav.find('.open-search').on('click', function () {
+        var parent = $(this).closest('.search');
+
+        if (!parent.hasClass('expanded')) {
+            // show search bar
+            parent.addClass('expanded');
+            $(this).html('Cancel');
+            s.desktopSearchInput.focus();
+
+        } else {
+            // hide search bar
+            parent.removeClass('expanded');
+            $(this).html('');
+            parent.find('input').blur().val('');
+        }
+    });
+
+    // Check for touchscreen device to disable visibility changes on :hover (change to click interaction)
+    if (isTouchDevice()) {
+        $("li.toplevel").add("#nav-trial-link").addClass("no-hover");
+    }
+
+    $("li.toplevel a.firstlevel").on('click',function (e) {
+        e.preventDefault();
+        var top_el = $(this).parent();
+        if ($(top_el).find('.submenuhoverarea').is(':visible')) {
+            closeMenu();
+        } else {
+            // console.log("Opening");
+            closeMenu();
+            openMenu(top_el);
+        }
+    });
+
+    $('html').on('click', function (e) {
+        var dd = $('ul.mm-dropdown');
+        var li = dd.find('.submenuhoverarea');
+        dd.each(function () {
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0) {
+                if ($(this).is(':visible')) {
+                    $(this).find('.submenuhoverarea').hide();
+                }
+            }
+        });
+    });
+
+    add_right_submenu();
+
+    // // Check for authentication for mobile accounts button
+    // if ((typeof authenticated !== "undefined") && (authenticated)) {
+    //     if($('#mobile-menu-sign-in').length){
+    //         var mobileSignIn = document.getElementById("mobile-menu-sign-in");
+    //         mobileSignIn.innerHTML = "Account";
+    //         mobileSignIn.setAttribute("href", "https://account.inductiveautomation.com");
+    //     }
+    // }
+}
+
+function initTooltips() {
+    $('.jqmenutooltip').tooltipster({
+        arrow: false,
+        distance: 4,
+        side: 'bottom',
+        theme: "tooltipster-menu",
+    });
+}
+
+function openMenu(menu_el) {
+    $(menu_el).addClass('expanded').find('.submenuhoverarea').slideDown(200);
+}
+
+function closeMenu() {
+    $('li.toplevel').removeClass('expanded').find('.submenuhoverarea').hide();
+}
+function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) {
+            return sParameterName[1];
+        }
+    }
+}
+
+$(function() {
+    var navSearch = $('#ia-menu-cse-search-box');
+    var formAction = navSearch.prop('action').toLowerCase();
+    var hostName = window.location.hostname;
+    var popDownButtons = $('.pop-down-button');
+    var mobilePopDownButtons = $('.mobile-menu-top-bar').children();
+    var mobilePopDownMenus = $('.mobile-popdown');
+
+    popDownButtons.on('click keypress', function(e) {
+        e.stopPropagation();
+        var self = $(this);
+        var expanded = self.hasClass('expanded');
+        var body = $('body');
+
+        if(typeof Cookies.get('show-menu-flair') === 'undefined'){
+            Cookies.set('show-menu-flair', false);
+            $('.icon.circle-flair').removeClass('circle-flair');
+        }
+
+        // close all menus
+        popDownButtons.removeClass('expanded').blur();
+        popDownButtons.find('.pop-down-menu').hide();
+        body.off();
+
+        if(self.find('.pop-down-menu').children().length > 0 && !expanded) {
+            // open menu
+            self.addClass('expanded');
+            self.find('.pop-down-menu').show();
+
+            body.on('click', function () {
+                self.removeClass('expanded');
+                self.find('.pop-down-menu').hide();
+                $(this).off();
+            });
+        }
+    });
+
+    mobilePopDownButtons.on('click', function() {
+        var popdownClass = $(this).data('popdown');
+        var popdowns = $('.mobile-popdown');
+        var popdown = popdowns.filter('.' + popdownClass);
+        var expanded = popdown.hasClass('expanded');
+
+        if(typeof Cookies.get('show-menu-flair') === 'undefined'){
+            Cookies.set('show-menu-flair', false);
+            $('.icon.circle-flair').removeClass('circle-flair');
+        }
+
+        // close all menus
+        mobilePopDownButtons.removeClass('expanded');
+        popdowns.removeClass('expanded');
+        popdowns.hide();
+
+        if(!expanded) {
+            // open menu
+            $(this).addClass('expanded');
+            popdown.addClass('expanded');
+            popdown.show();
+        }
+    });
+
+    $('.pop-down-menu').on('click', function(e) {
+        e.stopPropagation();
+    });
+
+    if(hostName.toLowerCase().indexOf('support') >= 0){
+        var newFormAction = formAction.replace('support.', '');
+        navSearch.prop('action', newFormAction);
+    }
+
+    function hideOrShow() {
+        if ($(this).find(".menu-info").is(":visible")) {
+            $(this).find(".menu-info").slideUp();
+            $(this).removeClass('expanded');
+        }
+        else {
+            $(this).siblings().find(".menu-info").slideUp();
+            $(this).find(".menu-info").slideDown();
+            $(this).siblings().removeClass("expanded");
+            $(this).addClass("expanded");
+        }
+    }
+
+    // enable mobile footer accordion
+    function resizeWindow() {
+        var body = $('body');
+        if (body.hasClass('responsive')) {
+                width = window.innerWidth;
+            // add listener to footer nav lists if mobile
+            if (width <= 641) {
+                body.addClass('mobile');
+                $('.right-off-canvas-menu').removeAttr('inert');
+                $(".footer-column").find(".menu-info").hide();
+                var ev = $._data($(".footer-column"), 'events');
+                $(".footer-column").off('click', hideOrShow).on('click', hideOrShow);
+            } else {
+                body.removeClass('mobile');
+                $('.right-off-canvas-menu').attr('inert',true);
+                $(".footer-column").find(".menu-info").show();
+                $(".footer-column").off('click', hideOrShow);
+            }
+        }
+    }
+
+    resizeWindow();
+    $(window).resize(resizeWindow);
+
+
+// check if not on support page (which does not call google analytics js)
+    if (!$("body").hasClass("bodymain")) {
+        $(".headerbg .mm-dropdown a.firstlevel").each(function () {
+            // the 'a.firstlevel' links are all the top nav menu items
+            // as of aug 12, 2016, a click only opens the menu drop down, it doesn't function as a link.
+            var href = $(this).attr("href");
+            var page_name = $(this).children('span').text();
+            var target = $(this).attr("target");
+            var text = $(this).text();
+            $(this).on('click',function (event) {
+                event.preventDefault();
+                if (page_name.length > 0) {
+                    var label = page_name;
+                } else {
+                    label = href;
+                }
+                label = label + " menu opened";
+                setTimeout(function () {
+                    window.open(href, (!target ? "_self" : target));
+                }, 300);
+            });
+        });
+
+        $(".headerbg .mm-dropdown .submenuwrapper a").each(function () {
+            var href = $(this).attr("href");
+            var page_name = $(this).children('span').text();
+            var target = $(this).attr("target");
+            var text = $(this).text();
+            $(this).on('click',function (event) {
+                event.preventDefault();
+                if (page_name.length > 0) {
+                    var label = page_name;
+                } else {
+                    label = href;
+                }
+                if ($(this).hasClass('tpmslink')) {
+                    if ($(this).hasClass('subhead')) {
+                        label = "Third Party Module Showcase (Platform)";
+                    } else {
+                        label = "Third Party Module Showcase (Pricing)";
+                    }
+                }
+                setTimeout(function () {
+                    window.open(href, (!target ? "_self" : target));
+                }, 300);
+            });
+        });
+
+        $(".headerbg a.find-integrator-header").each(function () {
+            // used for Find an Integrator and Schedule a Demo top links
+            var href = $(this).attr("href");
+            var target = $(this).attr("target");
+            var text = $(this).text();
+            $(this).on('click',function (event) {
+                event.preventDefault();
+                setTimeout(function () {
+                    window.open(href, (!target ? "_self" : target));
+                }, 300);
+            });
+        });
+
+        // $(".headerbg .mm-dropdown .col.extra a").each(function () {
+        //     //
+        // *** no longer in use, this was for wistia video clicks ***
+        //     //
+        //     var href = $(this).attr("href");
+        //     var page_name = $(this).children('span').text();
+        //     var target = $(this).attr("target");
+        //     var text = $(this).text();
+        //     $(this).on('click',function (event) {
+        //         // console.log('.col.extra a click');
+        //         event.preventDefault();
+        //         if (page_name.length > 0) {
+        //             var label = page_name;
+        //         } else {
+        //             label = href;
+        //         }
+        //         // don't redirect the wistia popover videos
+        //         if (!$(this).hasClass("no-redirect")) {
+        //             setTimeout(function () {
+        //                 window.open(href, (!target ? "_self" : target));
+        //             }, 300);
+        //         }
+        //     });
+        // });
+
+        $('#nav-trial-link a').on('click',function (event) {
+            event.preventDefault();
+            var href = $(this).attr("href");
+            var page_name = $(this).text();
+            window.location = href
+        });
+
+        $('footer a').on('click',function (event) {
+            //event.preventDefault();
+            var href = $(this).attr("href");
+            //var page_name = $(this).text();
+            if ($(this).text().length) {
+                var page_name = $(this).text();
+            }
+            else {
+                var page_name = $(this).attr("title");
+            }
+            //window.location = href
+        });
+    }
+
+    var location = window.location.pathname.split("/");
+    $('.toplevel').removeClass('active-tab');
+    if (location.length > 1) {
+        if (location[1].match(/ignition/) && location.length > 2 && !location[2].match(/edge/)) {
+            $('.toplevel.tab-Platform').addClass('active-tab');
+        } else if (location[1].match(/scada-software/) || location[1].match(/solutions/) || location.length > 2 && location[2].match(/edge/)) {
+            $('.toplevel.tab-Solutions').addClass('active-tab')
+        } else if (location[1].match(/pricing/) || location[1].match(/moduleshowcase/)) {
+            $('.toplevel.tab-Pricing').addClass('active-tab')
+        } else if (location[1].match(/resources/) || location[1].match(/case-studies/)) {
+            $('.toplevel.tab-Resources').addClass('active-tab')
+        } else if (window.location.hostname.split(".")[0] == "support" || location[1].match(/support/) || location[1].match(/forum/) || location[1].match(/training/)) {
+            $('.toplevel.tab-Support').addClass('active-tab')
+        } else if (location[1].match(/about/) || location[1].match(/blog/) || location[1].match(/events/) || location[1].match(/news/)) {
+            $('.toplevel.tab-About').addClass('active-tab')
+        } else {
+            $('.toplevel').removeClass('active-tab');
+        }
+    }
+    initMenu();
+
+});
+
+$(window).on('load', function() {
+    $('.no-fouc').fadeIn(); // wait to show these elements until after window load
+});

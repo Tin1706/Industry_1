@@ -1,0 +1,91 @@
+$(function () {
+
+var authenticated = false;
+var desktop_account_button = $("#js-global-login-account-button")
+var desktop_account_menu = $("#js-global-login-account-menu")
+var mobile_account_button = $("#js-global-login-account-button--mobile")
+var mobile_account_menu = $("#js-global-login-account-menu--mobile")
+var button_html = '';
+var menu_html = '';
+    var initials = ''
+initials = initials.toLowerCase();
+
+if (authenticated == false) {
+        button_html = '<a class="loaded-widget icon" href="/login/" id="ia-sso-sign-in" role="button" aria-label="Inductive Automation account login icon">\n' +
+        '                               <div class="profile-icon-wrapper jqmenutooltip" data-tooltip-content="#tooltipAccountContent">\n' +
+        '                                   <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m11.999 6c1.1 0 2 .9 2 2s-.9 2-2 2-1.99998-.9-1.99998-2 .89998-2 1.99998-2zm0 10c2.7 0 5.8 1.29 6 2h-11.99998c.23-.72 3.31-2 5.99998-2zm0-12c-2.20998 0-3.99998 1.79-3.99998 4s1.79 4 3.99998 4c2.21 0 4-1.79 4-4s-1.79-4-4-4zm0 10c-2.66998 0-7.99998 1.34-7.99998 4v2h15.99998v-2c0-2.66-5.33-4-8-4z" fill="#464646"/></svg>\n' +
+        '                               </div>\n' +
+        '                            </a>';
+    } else {
+        button_html = '<div class="loaded-widget icon" role="button" aria-label="Inductive Automation account login icon">\n' +
+            '                               <div class="profile-icon-wrapper jqmenutooltip" data-tooltip-content="#tooltipAccountContent">\n' +
+            '                                    <img src="https://cdn.auth0.com/avatars/' + initials + '.png">\n' +
+            '                              </div>\n' +
+            '                          </div>';
+        menu_html = '      <ul>\n' +
+            '                                    <li class="profile border-bottom">\n' +
+            '                                        <div class="profile-pic">\n' +
+            '                                            <div class="profile-icon-wrapper">\n' +
+            '                                                <img src="https://cdn.auth0.com/avatars/' + initials + '.png">\n' +
+            '                                            </div>\n' +
+            '                                        </div>\n' +
+            '                                        <div class="text">\n' +
+                    '                                            <span class="email"></span>\n' +
+            '                                        </div>\n' +
+            '                                    </li>\n' +
+        '                                    <li class="list-padding-top list-padding-bottom border-bottom">\n' +
+            '                                        <a class="external" href="https://account.inductiveautomation.com/" target="_blank">\n' +
+            '                                            <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m11.999 6c1.1 0 2 .9 2 2s-.9 2-2 2-1.99998-.9-1.99998-2 .89998-2 1.99998-2zm0 10c2.7 0 5.8 1.29 6 2h-11.99998c.23-.72 3.31-2 5.99998-2zm0-12c-2.20998 0-3.99998 1.79-3.99998 4s1.79 4 3.99998 4c2.21 0 4-1.79 4-4s-1.79-4-4-4zm0 10c-2.66998 0-7.99998 1.34-7.99998 4v2h15.99998v-2c0-2.66-5.33-4-8-4z" fill="#464646"/></svg>\n' +
+            '                                            <div class="text">\n' +
+            '                                                <span>Manage Account</span>\n' +
+            '                                            </div>\n' +
+            '                                        </a>\n' +
+            '                                    </li>\n' +
+            '                                    <li class="list-padding-top">\n' +
+            '                                        <a class="external" href="https://support.inductiveautomation.com/hc/" target="_blank">\n' +
+            '                                            <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m11.95 18c.35 0 .6458-.1208.8875-.3625s.3625-.5375.3625-.8875-.1208-.6458-.3625-.8875-.5375-.3625-.8875-.3625-.6458.1208-.8875.3625-.3625.5375-.3625.8875.1208.6458.3625.8875.5375.3625.8875.3625zm-.9-3.85h1.85c0-.55.0625-.9833.1875-1.3s.4792-.75 1.0625-1.3c.4333-.4333.775-.8458 1.025-1.2375.25-.39167.375-.8625.375-1.4125 0-.93333-.3417-1.65-1.025-2.15s-1.4917-.75-2.425-.75c-.95 0-1.7208.25-2.3125.75-.59167.5-1.00417 1.1-1.2375 1.8l1.65.65c.0833-.3.2708-.625.5625-.975s.7375-.525 1.3375-.525c.5333 0 .9333.14583 1.2.4375s.4.6125.4.9625c0 .33333-.1.64583-.3.9375-.2.2917-.45.5625-.75.8125-.7333.65-1.1833 1.1417-1.35 1.475s-.25.9417-.25 1.825zm.95 7.85c-1.3833 0-2.68333-.2625-3.9-.7875s-2.275-1.2375-3.175-2.1375-1.6125-1.9583-2.1375-3.175-.7875-2.5167-.7875-3.9.2625-2.68333.7875-3.9 1.2375-2.275 2.1375-3.175 1.95833-1.6125 3.175-2.1375 2.5167-.7875 3.9-.7875 2.6833.2625 3.9.7875 2.275 1.2375 3.175 2.1375 1.6125 1.95833 2.1375 3.175.7875 2.5167.7875 3.9-.2625 2.6833-.7875 3.9-1.2375 2.275-2.1375 3.175-1.9583 1.6125-3.175 2.1375-2.5167.7875-3.9.7875zm0-2c2.2333 0 4.125-.775 5.675-2.325s2.325-3.4417 2.325-5.675c0-2.23333-.775-4.125-2.325-5.675s-3.4417-2.325-5.675-2.325c-2.23333 0-4.125.775-5.675 2.325s-2.325 3.44167-2.325 5.675c0 2.2333.775 4.125 2.325 5.675s3.44167 2.325 5.675 2.325z" fill="#464646"/></svg>\n' +
+            '                                            <div class="text">\n' +
+            '                                                <span>Help Center</span>\n' +
+            '                                            </div>\n' +
+            '                                        </a>\n' +
+            '                                    </li>\n' +
+            '                                    <li class="list-padding-bottom">\n' +
+            '                                        <a href="/logout">\n' +
+            '                                            <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m5.64844 21c-.6767 0-1.32862-.2587-1.82032-.7236-.49169-.465-.78639-1.1008-.82421-1.7764v-13c.03784-.67598.33307-1.31139.82519-1.77637.49213-.46497 1.14425-.72418 1.82129-.72363h6.35161v2h-6.35161c-.16233-.00088-.31942.05966-.43945.16895-.12004.10929-.19469.25919-.20899.42089v12.81936c.01405.1614.08835.3116.20801.4209s.27642.1695.43848.1689h6.35356v2zm9.64546-5.707 2.295-2.295h-8.58695v-2h8.58885l-2.2949-2.29487 1.4141-1.41407 4.708 4.70804-4.708 4.707z" fill="#464646"/></svg>\n' +
+            '                                            <div class="text">\n' +
+            '                                                <span>Sign Out</span>\n' +
+            '                                            </div>\n' +
+            '                                        </a>\n' +
+            '                                    </li>\n' +
+            '                                </ul>';
+    }
+
+    desktop_account_button.find('.disabled-account-icon').fadeOut(200);
+    desktop_account_button.append(button_html);
+    desktop_account_menu.html(menu_html);
+    desktop_account_button.find('.loaded-widget').hide().fadeIn(200);
+    initTooltips(); // in megamenu_2019.js
+    mobile_account_button.find('.disabled-account-icon').fadeOut(200);
+    mobile_account_button.append(button_html);
+    mobile_account_menu.html(menu_html);
+    mobile_account_button.find('.loaded-widget').fadeIn(200);
+
+    window.document.getElementsByTagName('body')[0].dataset.gl_auth = authenticated // exposes auth status to outside application
+
+    $("#js-global-login-account-button, #js-global-login-account-button--mobile").on('click', '#ia-sso-sign-in', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var hostName = window.location.hostname;
+
+        if (hostName.indexOf('support.inductiveautomation.com') > -1){
+            service = encodeURIComponent('/support');
+        } else {
+            service = encodeURIComponent(window.location.pathname+window.location.search);
+        }
+
+        redirect_url = "/login/?service=" + service;
+        window.location.href = redirect_url;
+    })
+
+});

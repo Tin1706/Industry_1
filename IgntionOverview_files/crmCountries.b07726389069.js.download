@@ -1,0 +1,87 @@
+function get_country_list(country_id, valueIsLabel){
+	valueIsLabel = valueIsLabel || false;
+
+	$.get('/get-country-list', function(res){
+		var option_str = document.getElementById(country_id);
+		option_str.length=0;
+		option_str.options[0] = new Option('Select Country','');
+		option_str.options[1] = new Option('United States','US');
+
+		if(valueIsLabel){
+			option_str.options[1] = new Option('United States','United States');
+		}
+
+		option_str.selectedIndex = 0;
+
+		for (var i=0; i<res.length; i++) {
+			if(res[i].id === 'US' || res[i].id === 'United States'){
+				continue;
+			}
+
+			var countryName, countryId;
+
+			if(valueIsLabel){
+				countryName = titleCase(res[i].name);
+				countryId = titleCase(res[i].name);
+			}else {
+				countryName = titleCase(res[i].name);
+				countryId = res[i].id;
+			}
+
+			option_str.options[option_str.length] = new Option(countryName, countryId);
+		}
+	});
+}
+
+function get_state_list(state_id, country_code, valueIsLabel){
+	valueIsLabel = valueIsLabel || false;
+	var url = '/get-state-list?country=' + country_code;
+
+	if(valueIsLabel){
+		url = url + '&search-by-name=True'
+	}
+
+	$.get(url, function(res){
+		var option_str = document.getElementById(state_id);
+		option_str.length=0;
+		option_str.selectedIndex = 0;
+
+		if(res.length === 0){
+		    option_str.options[0] = new Option('Not Required','N/A');
+		    option_str.removeAttribute("required");
+        }else {
+		    option_str.options[0] = new Option('Select State / Territory','');
+		    if(!option_str.hasAttribute("required")){
+		        option_str.setAttribute("required", "");
+            }
+        }
+
+		for (var i=0; i < res.length; i++) {
+
+			var stateName, stateId;
+
+			if(valueIsLabel){
+				stateName = titleCase(res[i].name);
+				stateId = titleCase(res[i].name);
+			} else {
+				stateName = titleCase(res[i].name);
+				stateId = res[i].state_id;
+			}
+
+			option_str.options[option_str.length] = new Option(stateName, stateId);
+
+			let disabled_states = ['AK', 'CT', 'HI', 'SD', 'WA']
+			if(disabled_states.includes(stateId)) {
+				option_str.options[option_str.length -1].disabled = true
+			}
+		}
+	});
+}
+
+function titleCase(str) {
+  str = str.toLowerCase().split(' ');
+  for (var i = 0; i < str.length; i++) {
+    str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+  }
+  return str.join(' ');
+}

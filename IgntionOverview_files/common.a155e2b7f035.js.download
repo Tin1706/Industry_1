@@ -1,0 +1,92 @@
+/**
+ * common.js — Inductive Automation Tracking Utilities
+ */
+
+// =========================================================
+// 1. Core Tracking Functions
+// =========================================================
+
+function GTMTrackEvent(event, obj) {
+    /**
+     * @param {string} event            The name of the custom event to be triggered in GTM
+     * @param {object} obj (optional)   Other key / value pairs that will be passed to GTM (e.g. variables)
+     *
+     * @return {boolean}                Returns the return value of the call to dataLayer.push
+     */
+    obj = (typeof obj !== 'undefined') ?  obj : {};
+    obj.event = event;
+    return dataLayer.push(obj);
+}
+
+function GTMEnhancedConversions (firstname, lastname, phone, email) {
+    /**
+     * This creates the global variables necessary to set up Google Enhanced Conversions with Google Tag Manager.
+     *
+     * See the following documentation:
+     * https://support.google.com/google-ads/answer/11347292?sjid=13198561349216584009-NC
+     */
+    window.first_name = firstname;
+    window.last_name = lastname;
+    window.phone_number = phone;
+    window.email = email;
+}
+
+// =========================================================
+// 2. Global Engagement Listener
+// =========================================================
+(function() {
+    function deriveCategoryFromHref(href) {
+        if (!href) return 'other';
+        if (href.indexOf('tel:') === 0 || href.indexOf('mailto:') === 0) return 'contact';
+
+        // Subdomains
+        if (href.indexOf('docs.inductiveautomation.com') > -1) return 'docs';
+        if (href.indexOf('demo.inductiveautomation.com') > -1) return 'live_demo';
+        if (href.indexOf('page.inductiveautomation.com') > -1) return 'landing_page';
+        if (href.indexOf('inductiveuniversity.com') > -1) return 'university';
+
+        // Specific Path Logic
+        if (href.indexOf('/pricing/solution-suites') > -1) return 'solution_suites';
+        if (href.indexOf('/integrators/join') > -1) return 'integrator_join';
+        if (href.indexOf('/about/careers') > -1) return 'careers';
+
+        // High Volume Engagement
+        if (href.indexOf('/exchange') > -1) return 'exchange';
+        if (href.indexOf('/integrators') > -1 && href.indexOf('/integrators/join') === -1) return 'integrator_search';
+        if (href.indexOf('/training') > -1) return 'training';
+        if (href.indexOf('/resources') > -1 || href.indexOf('/blog') > -1) return 'resources';
+
+        // Core Conversions
+        if (href.indexOf('/products/ignition/demo') > -1) return 'demo';
+        if (href.indexOf('/downloads') > -1) return 'downloads';
+        if (href.indexOf('/pricing') > -1) return 'pricing';
+
+        return 'other';
+    }
+
+    function getClickText(element) {
+        var btn = element.querySelector('button');
+        var text = btn ? btn.innerText : element.innerText;
+        return text ? text.trim().substring(0, 100) : '';
+    }
+
+    document.addEventListener('click', function(e) {
+        // Only fires on intentional data-track attributes
+        var el = e.target.closest('[data-track="cta"]');
+        if (!el) return;
+
+        var href = el.getAttribute('href') || '';
+        var payload = {
+            track_category: deriveCategoryFromHref(href || window.location.pathname),
+            cta_text: getClickText(el),
+            origin_page_path: window.location.pathname,
+            destination_url: href
+        };
+
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'trackCTAClick',
+            ...payload
+        });
+    });
+})();

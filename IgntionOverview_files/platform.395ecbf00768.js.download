@@ -1,0 +1,432 @@
+var platformPages = {
+    settings: {
+        platformSpecs: $('#platformBtn'),
+        rightButton: $('.platform-try-section a.right-btn.button'),
+        leftButton: $('.platform-try-section a.left-btn.button')
+    },
+
+    init: function () {
+        var s = this.settings;
+        this.bindUIActions(s);
+        this.clearHoverStatesForTouch();
+    },
+
+    bindUIActions: function (s) {
+
+        s.leftButton.hover(function () {
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_leftArrow_hover@2x.png');
+        }, function () {
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_leftArrow@2x.png');
+        });
+
+        s.rightButton.hover(function () {
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_rightArrow_hover@2x.png');
+        }, function () {
+            $(this).children('img').attr("src", STATIC_URL + 'images/icons/learnMoreFooter_rightArrow@2x.png');
+        });
+
+        s.platformSpecs.click(function () {
+            var platformInfo = $('.solutions-platformReqs');
+            var platformImage = $('#platformBtn img');
+
+            if (platformInfo.css('display') === 'none') {
+                platformImage.removeClass('moreArrowDown');
+                platformImage.addClass('moreArrowUp');
+                platformInfo.slideDown('slow');
+                $('html, body').animate({
+                    scrollTop: platformInfo.offset().top
+                }, 1000);
+            } else {
+                platformImage.addClass('moreArrowDown');
+                platformImage.removeClass('moreArrowUp');
+                platformInfo.slideUp('slow');
+            }
+        });
+
+        s.platformSpecs.keypress(function () {
+            var platformInfo = $('.solutions-platformReqs');
+            var platformImage = $('#platformBtn img');
+
+            if (platformInfo.css('display') === 'none') {
+                platformImage.removeClass('moreArrowDown');
+                platformImage.addClass('moreArrowUp');
+                platformInfo.slideDown('slow');
+                $('html, body').animate({
+                    scrollTop: platformInfo.offset().top
+                }, 1000);
+            } else {
+                platformImage.addClass('moreArrowDown');
+                platformImage.removeClass('moreArrowUp');
+                platformInfo.slideUp('slow');
+            }
+        });
+    },
+
+    clearHoverStatesForTouch: function() {
+        if ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch) {
+            $('.link-with-arrow').addClass("no-hover");
+        }
+    }
+};
+
+var architectures = {
+    settings: {
+        slideshow: $('.slideshow'),
+        redundancy: $('input[name=show-redundancy]'),
+        go_to_slide_1: $('#go_to_slide_1'),
+        go_to_slide_2: $('#go_to_slide_2'),
+        go_to_slide_3: $('#go_to_slide_3'),
+        go_to_slide_4: $('#go_to_slide_4'),
+        go_to_slide_5: $('#go_to_slide_5'),
+        go_to_slide_6: $('#go_to_slide_6'),
+        slide_labels: ['Basic', 'Scale-Out', 'Hub & Spoke', 'Enterprise', 'IIoT', 'Cloud Hybrid'],
+        architecture_desc: $('.architecture-description'),
+        architecture_pdf: $('a.apdf'),
+        architecture_1: $('#ignition_architecture_1'),
+        architecture_2: $('#ignition_architecture_2'),
+        architecture_3: $('#ignition_architecture_3'),
+        architecture_4: $('#ignition_architecture_4'),
+        architecture_5: $('#ignition_architecture_5'),
+        architecture_6: $('#ignition_architecture_6'),
+        checkboxDiv: $('#redundant-checkbox'),
+        product_name: $('#product-name').find('.name'),
+        redundantImages: [
+            {
+                "id": '#arch-image-one',
+                'custom_message': false
+            },
+            {
+                "id": '#arch-image-two',
+                'custom_message': false
+            },
+            {
+                "id": '#arch-image-three',
+                'custom_message': '(with redundancy)'
+
+            },
+            {
+                "id": '#arch-image-four',
+                'custom_message': false
+            }
+        ]
+    },
+
+    init: function () {
+        var s = this.settings;
+        this.startSlick(s);
+        this.bindUIActions(s);
+        this.initSlideshowDesciption(s);
+    },
+
+    bindUIActions: function (s) {
+        s.go_to_slide_1.click(function () {
+            s.slideshow.slick('slickGoTo', 0);
+            s.architecture_2.hide();
+            s.architecture_3.hide();
+            s.architecture_4.hide();
+            s.architecture_5.hide();
+            s.architecture_6.hide();
+            addActiveClass(0);
+            s.architecture_1.show();
+            s.checkboxDiv.css('visibility', 'visible');
+        });
+
+        s.go_to_slide_2.click(function () {
+            s.slideshow.slick('slickGoTo', 1);
+            s.architecture_1.hide();
+            s.architecture_3.hide();
+            s.architecture_4.hide();
+            s.architecture_5.hide();
+            s.architecture_6.hide();
+            addActiveClass(1);
+            s.architecture_2.show();
+            s.checkboxDiv.css('visibility', 'visible');
+        });
+
+        s.go_to_slide_3.click(function () {
+            s.slideshow.slick('slickGoTo', 2);
+            s.architecture_1.hide();
+            s.architecture_2.hide();
+            s.architecture_4.hide();
+            s.architecture_5.hide();
+            s.architecture_6.hide();
+            addActiveClass(2);
+            s.architecture_3.show();
+            s.checkboxDiv.css('visibility', 'visible');
+        });
+
+        s.go_to_slide_4.click(function () {
+            s.slideshow.slick('slickGoTo', 3);
+            s.architecture_1.hide();
+            s.architecture_2.hide();
+            s.architecture_3.hide();
+            s.architecture_5.hide();
+            s.architecture_6.hide();
+            addActiveClass(3);
+            s.architecture_4.show();
+            s.checkboxDiv.css('visibility', 'visible');
+        });
+
+        s.go_to_slide_5.click(function () {
+            s.slideshow.slick('slickGoTo', 4);
+            s.architecture_1.hide();
+            s.architecture_2.hide();
+            s.architecture_3.hide();
+            s.architecture_4.hide();
+            s.architecture_6.hide();
+            addActiveClass(4);
+            s.architecture_5.show();
+            s.checkboxDiv.css('visibility', 'hidden');
+        });
+
+        s.go_to_slide_6.click(function () {
+            s.slideshow.slick('slickGoTo', 5);
+            s.architecture_1.hide();
+            s.architecture_2.hide();
+            s.architecture_3.hide();
+            s.architecture_4.hide();
+            s.architecture_5.hide();
+            addActiveClass(5);
+            s.architecture_6.show();
+            s.checkboxDiv.css('visibility', 'hidden');
+        });
+
+        s.slideshow.on('afterChange', function (event, slick, currentSlide) {
+            s.architecture_1.hide();
+            s.architecture_2.hide();
+            s.architecture_3.hide();
+            s.architecture_4.hide();
+            s.architecture_5.hide();
+            s.architecture_6.hide();
+
+            addActiveClass(currentSlide);
+
+            $('a.button.label').text(s.slide_labels[currentSlide]);
+            var current = currentSlide + 1;
+
+            //If the architecture is IIoT or Cloud Hybrid do not show the redundancy checkbox
+            if (current === 5 || current === 6) {
+                s.checkboxDiv.css('visibility', 'hidden');
+            } else {
+                s.checkboxDiv.css('visibility', 'visible');
+            }
+
+            if(s.product_name.length > 0) {
+                s.product_name.text($(`#ignition_architecture_${currentSlide+1}`).find('.architecture-pdf').data('productName'));
+            }
+
+            $('#ignition_architecture_' + current).show();
+        });
+
+        s.redundancy.change(function () {
+            if ($(this).is(':checked')) {
+                s.redundantImages.forEach(function(obj, idx){
+                    $(obj.id).attr('src', function (_, v) {
+                        return ($(this).data('redundantImg'));
+                    });
+
+                    var new_idx = idx + 1;
+                    var arch_desc_wrapper = $('#ignition_architecture_' + new_idx);
+                    arch_desc_wrapper.find('h4 span').html(' with Redundancy');
+
+                    if(obj.custom_message){
+                        arch_desc_wrapper.find('h4 + p span.redundant-extra').html(obj.custom_message);
+                    }else {
+                        arch_desc_wrapper.find('h4 + p span.redundant-extra').html('(with a redundant server)');
+                    }
+                });
+
+                s.architecture_pdf.attr('href', function (_, v) {
+                    return ($(this).data('redundantPdf'));
+                });
+            } else {
+                s.redundantImages.forEach(function(obj, idx){
+                    $(obj.id).attr('src', function (_, v) {
+                        return ($(this).data('singleImg'));
+                    });
+                });
+                s.architecture_desc.find('.redundant-extra').html('');
+                s.architecture_pdf.attr('href', function (_, v) {
+                    return ($(this).data('singlePdf'));
+                });
+            }
+        });
+
+        function addActiveClass(currentSlide){
+
+            $('.arch-button-panel a.button').removeClass('active');
+            switch (currentSlide){
+                case 0:
+                    s.go_to_slide_1.addClass('active');
+                    break;
+                case 1:
+                    s.go_to_slide_2.addClass('active');
+                    break;
+                case 2:
+                    s.go_to_slide_3.addClass('active');
+                    break;
+                case 3:
+                    s.go_to_slide_4.addClass('active');
+                    break;
+                case 4:
+                    s.go_to_slide_5.addClass('active');
+                    break;
+                case 5:
+                    s.go_to_slide_6.addClass('active');
+                    break;
+            }
+        }
+
+    },
+
+    startSlick: function (s) {
+        s.slideshow.slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false,
+            fade: true,
+            speed: 200,
+            responsive: [
+                {
+                    breakpoint: 741,
+                    settings: {
+                        arrows: true,
+                        prevArrow: '#slidePrev',
+                        nextArrow: '#slideNext',
+                        speed: 100,
+                        fade: false
+                    }
+                }
+            ]
+        })
+    },
+
+    initSlideshowDesciption: function (s) {
+        $('.arch-button-panel a#go_to_slide_1').addClass('active');
+        s.architecture_1.show();
+        s.architecture_2.hide();
+        s.architecture_3.hide();
+        s.architecture_4.hide();
+        s.architecture_5.hide();
+        s.architecture_6.hide();
+    }
+};
+
+var whatsNewCarousel = {
+    settings: {
+        slideShow: $('div.architecture-carousel'),
+        go_to_slide_1: $('a.button.slide-one'),
+        go_to_slide_2: $('a.button.slide-two'),
+        mobileSlideButton: $('a.button.label'),
+        slide_labels: ['Scale-Out', 'Hub & Spoke'],
+        window: $(window)
+    },
+
+    init: function () {
+        var s = this.settings;
+        this.initSlick(s);
+        this.bindUIActions(s);
+    },
+
+    bindUIActions: function (s) {
+        s.go_to_slide_1.click(function () {
+            s.slideShow.slick('slickGoTo', 0);
+        });
+
+        s.go_to_slide_2.click(function () {
+            s.slideShow.slick('slickGoTo', 1);
+        });
+
+        s.slideShow.on('afterChange', function (event, slick, currentSlide, nextSlide) {
+            $('div.slide-button-group a.button').removeClass('active');
+            if (currentSlide === 0) {
+                s.go_to_slide_1.addClass('active');
+            } else {
+                s.go_to_slide_2.addClass('active');
+            }
+
+            if (s.window.width() <= 641) {
+                var height = $(".slick-current").height();
+                $(this).css({height: height});
+            } else {
+                $(this).css({height: "auto"})
+            }
+
+            if (s.window.width() <= 741) {
+                var buttonText = s.slide_labels[currentSlide];
+                s.mobileSlideButton.text(buttonText);
+            }
+        });
+
+        s.window.on('resize load', function () {
+            var width = s.window.width();
+
+            if (width <= 641) {
+                var height = $(".slick-current").height();
+                s.slideShow.css({height: height});
+            } else {
+                s.slideShow.css({height: "auto"});
+            }
+
+            if (s.window.width() <= 741) {
+                var currentSlide = s.slideShow.slick('slickCurrentSlide');
+                var buttonText = s.slide_labels[currentSlide];
+                s.mobileSlideButton.text(buttonText);
+            }
+        });
+    },
+
+    initSlick: function (s) {
+        s.slideShow.slick({
+            dots: false,
+            infinite: true,
+            speed: 100,
+            fade: true,
+            cssEase: 'linear',
+            arrows: false,
+            zIndex: 10,
+            responsive: [
+                {
+                    breakpoint: 741,
+                    settings: {
+                        arrows: true,
+                        prevArrow: '#slidePrev',
+                        nextArrow: '#slideNext',
+                        speed: 100,
+                        cssEase: 'linear',
+                        fade: true
+                    }
+                }
+            ]
+        })
+    }
+};
+
+var perspectivePageVideos = {
+    init: function () {
+        $(function() {
+            // Get media - with autoplay disabled (audio or video)
+            var media = $('video').not("[autoplay='autoplay']");
+            var tolerancePixel = 40;
+            var playedVideos = [];
+
+            function checkMedia(){
+                // Get current browser top and bottom
+                var scrollTop = $(window).scrollTop() + tolerancePixel;
+                var scrollBottom = $(window).scrollTop() + $(window).height() - tolerancePixel;
+
+                media.each(function(index, el) {
+                    var yTopMedia = $(this).offset().top;
+                    var yBottomMedia = $(this).height() + yTopMedia;
+                    var videoName = $(this).data('vd-name');
+
+                    if(scrollTop < yBottomMedia && scrollBottom > yTopMedia && playedVideos.indexOf(videoName) === -1){
+                        $(this).get(0).play();
+                        playedVideos.push(videoName)
+                    }
+                });
+            }
+            $(document).on('scroll', checkMedia);
+        });
+    }
+};

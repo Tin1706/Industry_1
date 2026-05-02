@@ -1,0 +1,36 @@
+$( document ).ready(function() {
+    banner.init()
+});
+
+var banner = {
+    settings: {
+        banner: $('.site-banner')
+    },
+
+    init: function () {
+        var s = this.settings;
+        this.initialBannerLoad(s);
+        this.bindUIActions(s);
+    },
+
+    bindUIActions: function (s) {
+        s.banner.on('click', '.close-icon', function(){
+            $(this).closest('.site-banner').hide();
+            var now = new Date();
+            var expirationDate = new Date(now.setDate(now.getDate()+7));
+            var cookieName = s.banner.data('cookieName');
+            Cookies.set(cookieName, 'True', { expires: expirationDate });
+        });
+    },
+
+    initialBannerLoad: function (s) {
+        var cookieName = s.banner.data('cookieName');
+        var bannerCookie = Cookies.get(cookieName);
+
+        if(bannerCookie){
+            s.banner.hide();
+        } else {
+            s.banner.show();
+        }
+    }
+};

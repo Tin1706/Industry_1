@@ -1,0 +1,15 @@
+$(function() {
+
+    var country = 'VN';
+
+    function setPhoneNumber(label, number) {
+        $('.header2019 .call-us-text, .right-off-canvas-menu .mobile-call-us-text').html(label);
+        $('.header2019 a.call-us-number, .right-off-canvas-menu a.call-us-number').attr('href', 'tel:+' + number).html(number);
+    }
+
+    if (country.toString() === "USA" || country.toString() === "US" || country.toString() === "United States") {
+        setPhoneNumber('Call Us', '1-800-266-7798');
+    } else {
+        setPhoneNumber('Call Us (intl)', '+1 916 456 1045');
+    }
+});
