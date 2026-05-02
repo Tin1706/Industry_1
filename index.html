@@ -64,37 +64,43 @@
                     <a class="navbar-brand d-flex align-items-center" href="index.html">
                         <p class="mt-3 fw-bold fs-4">DaiTinEnergy</p>
                     </a>
-                </div>
-                <div class="col-12 col-lg-7 col-lg-8 order-lg-2 order-3" style="height:60px">
-                    <form method="post" action="https://www.thytronic.com/products-search.php" onclick="ChangeCheckboxLabel()">
-                        <div class="d-flex justify-content-center">
-                            <div class="nav-searchbar nav-progressive-attribute navRow" style=" " accept-charset="utf-8">
-                                <div class="dropdown" style="height:30px;">
-                                    <div class="dropdown-menu" style="background-color: rgb(237, 235, 235) !important">
-                                        <div class="form-check" style="padding-left: 38px;"><input class="form-check-input dropdown-item drop-down-nav nav-chk" name="s0" type="checkbox" id="formCheck-0"><label class="form-check-label nav-link-chk" for="formCheck-0">Products</label></div>
-                                        <div class="form-check" style="padding-left: 38px;"><input class="form-check-input dropdown-item drop-down-nav nav-chk" name="s1" type="checkbox" id="formCheck-1"><label class="form-check-label nav-link-chk" for="formCheck-1">Resources / Documents</label></div>
-                                        <div class="form-check" style="padding-left: 38px;"><input class="form-check-input dropdown-item drop-down-nav nav-chk" name="s2" type="checkbox" id="formCheck-2"><label class="form-check-label nav-link-chk" for="formCheck-2">News</label></div>
-                                        <div class="form-check" style="padding-left: 38px;"><input class="form-check-input dropdown-item drop-down-nav nav-chk" name="s3" type="checkbox" id="formCheck-3"><label class="form-check-label nav-link-chk" for="formCheck-3">Case Histories</label></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <script type="text/plain">
-                    function ChangeCheckboxLabel() { var s0 = document.getElementById("formCheck-0"); var s1 = document.getElementById("formCheck-1"); var s2 = document.getElementById("formCheck-2"); var s3 = document.getElementById("formCheck-3"); var labelAll = document.getElementById("all");
-                    if( s0.checked || s1.checked || s2.checked || s3.checked ) { labelAll.innerHTML = 'Filtered'; }else{ labelAll.innerHTML = 'All'; } }
-                </script>
-                <div class="col-6 col-lg-1 order-lg-3 order-2">
-                    <style>
-                        .language {
-                            width: 16px;
-                            height: 16px;
-                            margin-left: 10px;
-                            margin-right: 10px;
-                            cursor: pointer;
-                        }
-                    </style>
+                    <div class="collapse navbar-collapse" id="thytronicMenu">
+                        <ul class="navbar-nav ms-auto navUl d-flex align-items-lg-center" style="list-style: none; gap: 5px;">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle navlinkS" href="#" data-bs-toggle="dropdown">The group</a>
+                                <ul class="dropdown-menu border-0 shadow-sm">
+                                    <li><a class="dropdown-item nBlue" href="the-group.html">The group</a></li>
+                                    <li><a class="dropdown-item nBlue" href="company.html">Company</a></li>
+                                    <li><a class="dropdown-item nBlue" href="partners.html">Partners</a></li>
+                                    <li><a class="dropdown-item nBlue" href="contacts.html">Contact us</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle navlinkS" href="#" data-bs-toggle="dropdown">Products</a>
+                                <ul class="dropdown-menu border-0 shadow-sm">
+                                    <li><a class="dropdown-item nBlue" href="protection-relay.html">Protective relay</a></li>
+                                    <li><a class="dropdown-item nBlue" href="products-automation.html">Automation</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item"><a class="nav-link navlinkS" href="solution.html">Solutions</a></li>
+                            <li class="nav-item"><a class="nav-link navlinkS" href="IgnitionOverview.html">SCADA</a></li>
+                            <li class="nav-item"><a class="nav-link navlinkS" href="case-histories.html">Case Histories</a></li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle navlinkS px-3 py-2" href="#" id="digitalSupportDrop" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f6f3f3; border-radius: 5px; display: block;">
+        Digital support
+    </a>
+                                <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="digitalSupportDrop" style="background-color: #edebeb !important;">
+                                    <li><a class="dropdown-item nBlue" href="tutorials.html">Tutorial</a></li>
+                                    <li><a class="dropdown-item nBlue" href="FAQs.html">FAQ</a></li>
+                                    <li><a class="dropdown-item nBlue" href="configurators.html">Configurator</a></li>
+                                    <li><a class="dropdown-item nBlue" href="resources.html">Resources</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="row mx-auto" style="max-width:1200px">
@@ -121,7 +127,9 @@
                                 <a class="dropdown-item nav-link nBlue" style="position: relative; " href="support-service.html">Support</a>
                             </div>
                         </li>
-                        <li class="nav-item horizontal-item"><a class="nav-link navlink navlinkS" href="IgnitionOverview.html">SCADA</a></li>
+                        <li class="nav-item horizontal-item">
+                            <a class="nav-link navlink navlinkS" href="IgnitionOverview.html">SCADA</a>
+                        </li>
                         <li class="nav-item horizontal-item"><a class="nav-link navlink navlinkS" href="case-histories.html">Case Histories</a></li>
                         <li class="nav-item horizontal-item dropdown"><a class="nav-link navlink dropdown-toggle navlinkS" href="#" style="background-color: #f6f3f3;" data-bs-toggle="dropdown">Digital support</a>
                             <div class="dropdown-menu" style="background-color: #edebeb!important;">
